@@ -1,8 +1,8 @@
 class Quiz < ApplicationRecord
-  belongs_to: user
+  belongs_to :user
 
-  has_many: questions, dependent: destroy # If the quizz is destroyed, then questions get deleted 
-  has_many: attempts, dependent: destroy
+  has_many :questions, dependent: :destroy # If the quizz is destroyed, then questions get deleted 
+  has_many :attempts, dependent: :destroy
 
   enum :status, { draft: 0, published: 1 }, default: :draft
 

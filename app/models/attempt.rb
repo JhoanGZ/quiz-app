@@ -4,6 +4,6 @@ class Attempt < ApplicationRecord
 
   has_many :answers, dependent: :destroy
   
-  validates :user_id, uniqueness: { scope: :quiz_id } 
+  validates :user_id, uniqueness: { scope: :quiz_id, message: "Usted completó este quizz!" } 
 
 end
