@@ -1,0 +1,28 @@
+services:
+  db:
+    image: postgres:16
+    environment: 
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+
+  web:
+    build: .
+    command: ./bin/rails server -b 0.0.0.0
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/quiz_development
+      RAILS_ENV: development
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
+
