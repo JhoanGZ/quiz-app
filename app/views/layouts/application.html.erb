@@ -1,30 +1,44 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "App" %></title>
+    <title><%= content_for(:title) || "Quiz App" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="App">
-    <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-
-    <%= yield :head %>
-
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
-
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <main class="container mx-auto mt-28 px-5 flex">
+  <body class="bg-gray-50 min-h-screen">
+    <nav class="bg-white shadow">
+      <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+        <a href="/" class="text-xl font-bold text-indigo-600">Quiz App</a>
+        <div class="flex items-center gap-4">
+          <% if user_signed_in? %>
+            <span class="text-sm text-gray-600">
+              <%= current_user.email %> (<%= current_user.role %>)
+            </span>
+            <%= link_to "Cerrar sesión", destroy_user_session_path, data: { turbo_method: :delete }, class: "text-sm text-red-600 hover:underline" %>
+          <% else %>
+            <%= link_to "Iniciar sesión", new_user_session_path, class: "text-sm text-indigo-600 hover:underline" %>
+            <%= link_to "Registrarse", new_user_registration_path, class: "text-sm text-indigo-600 hover:underline" %>
+          <% end %>
+        </div>
+      </div>
+    </nav>
+
+    <% if notice %>
+      <div class="max-w-7xl mx-auto px-4 mt-4">
+        <div class="bg-green-100 text-green-800 px-4 py-2 rounded"><%= notice %></div>
+      </div>
+    <% end %>
+    <% if alert %>
+      <div class="max-w-7xl mx-auto px-4 mt-4">
+        <div class="bg-red-100 text-red-800 px-4 py-2 rounded"><%= alert %></div>
+      </div>
+    <% end %>
+
+    <main class="max-w-7xl mx-auto px-4 py-6">
       <%= yield %>
     </main>
   </body>
