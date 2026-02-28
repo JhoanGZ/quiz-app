@@ -2,7 +2,7 @@ class QuizzesController < ApplicationController
   before_action :set_quiz, only: [:show, :edit, :update, :destroy, :publish]
 
   def index
-    @quizzes = policy_scop(Quiz)
+    @quizzes = policy_scope(Quiz)
   end
 
   def show
@@ -59,7 +59,7 @@ class QuizzesController < ApplicationController
   end
 
   def quiz_params
-    params.require(:quiz).permit(:title, :description, :passing_core)
+    params.require(:quiz).permit(:title, :description, :passing_score, :image, :video_url)
   end
 
 end
