@@ -5,18 +5,20 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5433:5432"
+      - "5434:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.dev       
     command: ./bin/rails server -b 0.0.0.0
     ports:
       - "3000:3000"
     volumes:
-      - .:/app
+      - .:/rails
+      - bundle_cache:/usr/local/bundle
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/quiz_development
       RAILS_ENV: development
@@ -25,4 +27,4 @@ services:
 
 volumes:
   postgres_data:
-
+  bundle_cache:                         

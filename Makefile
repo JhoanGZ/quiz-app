@@ -31,4 +31,7 @@ db-migrate:
 db-seed:
 	docker compose run --rm web rails db:seed
 
+console:
+	docker compose run --rm web rails console
+
 setup: build db-create db-migrate db-seed
