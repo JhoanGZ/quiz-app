@@ -15,7 +15,6 @@ class QuestionsController < ApplicationController
   def create 
     @question = @quiz.questions.build(question_params)
     authorize @question
-
     if @question.save
       redirect_to quiz_question_path(@quiz, @question), notice: "Pregunta creada."
     else
@@ -29,9 +28,8 @@ class QuestionsController < ApplicationController
 
   def update
     authorize @question
-
     if @question.update(question_params)
-      redirect_to quiz_question_path(@quiz, @question), notice: "Pregunta actualizada"
+      redirect_to quiz_question_path(@quiz, @question), notice: "Pregunta actualizada."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -40,7 +38,7 @@ class QuestionsController < ApplicationController
   def destroy
     authorize @question
     @question.destroy
-    redirect_to @quiz, notice: "Pregunta eliminada."
+    redirect_to quiz_path(@quiz), notice: "Pregunta eliminada."
   end
 
   private
@@ -50,11 +48,10 @@ class QuestionsController < ApplicationController
   end
   
   def set_question
-    @question = @quiz.questions.find(params[:id])
+    @question = @quiz.questions.includes(:options).find(params[:id])
   end
 
   def question_params
     params.require(:question).permit(:body, :video_url, :image)
   end
 end
-

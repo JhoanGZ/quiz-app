@@ -1,4 +1,180 @@
-<div>
-  <h1 class="font-bold text-4xl">Quizzes#index</h1>
-  <p>Find me in app/views/quizzes/index.html.erb</p>
+<div style="margin-bottom: 32px; display: flex; justify-content: space-between; align-items: center;">
+  <div>
+    <h1 style="font-size: 28px; font-weight: bold; color: #1a1a2e;">
+      <%= current_user.admin? ? "Mis Quizzes" : "Quizzes disponibles" %>
+    </h1>
+    <p style="color: #888; margin-top: 4px;">
+      <%= current_user.admin? ? "Gestiona y publica tus quizzes" : "Elige un quiz y pon a prueba tus conocimientos" %>
+    </p>
+  </div>
+
+  <% if current_user.admin? %>
+    <%= link_to "＋ Nuevo Quiz", new_quiz_path,
+        style: "background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white; padding: 12px 24px; border-radius: 10px;
+                text-decoration: none; font-weight: 600; font-size: 14px;
+                box-shadow: 0 4px 15px rgba(102,126,234,0.4);" %>
+  <% end %>
 </div>
+
+<% if @quizzes.empty? %>
+
+  <div style="text-align: center; padding: 80px 0; color: #aaa;">
+    <div style="font-size: 64px; margin-bottom: 16px;">📋</div>
+    <p style="font-size: 18px; font-weight: 600; color: #555;">No hay quizzes todavía</p>
+
+    <% if current_user.admin? %>
+      <p style="margin-top: 8px; font-size: 14px;">
+        Crea tu primer quiz con el botón de arriba
+      </p>
+    <% end %>
+  </div>
+
+<% else %>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;">
+
+    <% @quizzes.each do |quiz| %>
+      <% attempt = @attempts_by_quiz[quiz.id] if defined?(@attempts_by_quiz) %>
+
+      <div style="background: white; border-radius: 16px; overflow: hidden;
+                  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+                  transition: transform 0.2s, box-shadow 0.2s;"
+           onmouseover="this.style.transform='translateY(-4px)';
+                        this.style.boxShadow='0 8px 24px rgba(0,0,0,0.12)'"
+           onmouseout="this.style.transform='translateY(0)';
+                       this.style.boxShadow='0 2px 12px rgba(0,0,0,0.08)'">
+
+        <!-- Header color -->
+        <div style="height: 8px;
+                    background: <%= quiz.published? ?
+                      'linear-gradient(90deg, #667eea, #764ba2)' :
+                      'linear-gradient(90deg, #f093fb, #f5576c)' %>;">
+        </div>
+
+        <div style="padding: 24px;">
+
+          <!-- Status + Question count -->
+          <div style="display: flex; justify-content: space-between;
+                      align-items: flex-start; margin-bottom: 12px;">
+
+            <span style="font-size: 11px; font-weight: 700;
+                         text-transform: uppercase; letter-spacing: 1px;
+                         padding: 4px 10px; border-radius: 20px;
+                         <%= quiz.published? ?
+                           'background: #e8f5e9; color: #2e7d32;' :
+                           'background: #fff3e0; color: #e65100;' %>">
+              <%= quiz.published? ? "✓ Publicado" : "⏸ Borrador" %>
+            </span>
+
+            <span style="font-size: 12px; color: #aaa;">
+              <%= quiz.questions.count %>
+              <%= quiz.questions.count == 1 ? "pregunta" : "preguntas" %>
+            </span>
+          </div>
+
+          <!-- Attempt badge (solo player y solo si completado) -->
+          <% if current_user.player? && attempt&.completed_at.present? %>
+            <div style="margin-bottom: 12px;
+                        font-size: 11px; font-weight: 700;
+                        color: #2e7d32;">
+              ✓ Realizado (<%= attempt.score %>%)
+            </div>
+          <% end %>
+
+          <!-- Title -->
+          <h2 style="font-size: 18px; font-weight: 700;
+                     color: #1a1a2e; margin-bottom: 8px;
+                     line-height: 1.3;">
+            <%= quiz.title %>
+          </h2>
+
+          <!-- Description -->
+          <% if quiz.description.present? %>
+            <p style="font-size: 14px; color: #777;
+                      margin-bottom: 16px; line-height: 1.5;">
+              <%= truncate(quiz.description, length: 90) %>
+            </p>
+          <% end %>
+
+          <!-- Passing score -->
+          <div style="display: flex; align-items: center;
+                      gap: 6px; margin-bottom: 20px;">
+            <span style="font-size: 12px; color: #aaa;">
+              Puntaje mínimo:
+            </span>
+            <span style="font-size: 12px; font-weight: 700; color: #667eea;">
+              <%= quiz.passing_score %>%
+            </span>
+          </div>
+
+          <!-- Actions -->
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+
+            <% if current_user.player? %>
+
+              <% if attempt&.completed_at.present? %>
+                <%= link_to "Ver resultado",
+                    attempt_path(attempt),
+                    style: "flex: 1; text-align: center; padding: 10px;
+                            background: linear-gradient(135deg, #667eea, #764ba2);
+                            color: white; border-radius: 8px;
+                            text-decoration: none; font-size: 13px;
+                            font-weight: 600;" %>
+              <% else %>
+                <%= button_to "Responder",
+                    attempts_path,
+                    params: { attempt: { quiz_id: quiz.id } },
+                    method: :post,
+                    style: "flex: 1; text-align: center; padding: 10px;
+                            background: linear-gradient(135deg, #667eea, #764ba2);
+                            color: white; border-radius: 8px;
+                            border: none; font-size: 13px;
+                            font-weight: 600; cursor: pointer;" %>
+              <% end %>
+
+            <% else %>
+
+              <%= link_to "Ver", quiz_path(quiz),
+                  style: "flex: 1; text-align: center; padding: 10px;
+                          background: linear-gradient(135deg, #667eea, #764ba2);
+                          color: white; border-radius: 8px;
+                          text-decoration: none; font-size: 13px;
+                          font-weight: 600;" %>
+
+              <% if quiz.user_id == current_user.id %>
+                <%= link_to "Editar", edit_quiz_path(quiz),
+                    style: "flex: 1; text-align: center; padding: 10px;
+                            background: #f0f0f8; color: #667eea;
+                            border-radius: 8px; text-decoration: none;
+                            font-size: 13px; font-weight: 600;" %>
+
+                <% if quiz.draft? %>
+                  <%= button_to "Publicar", publish_quiz_path(quiz), method: :patch,
+                      style: "flex: 1; text-align: center; padding: 10px;
+                              background: #e8f5e9; color: #2e7d32;
+                              border-radius: 8px; border: none;
+                              font-size: 13px; font-weight: 600;
+                              cursor: pointer;" %>
+
+                  <%= button_to "Eliminar", quiz_path(quiz), method: :delete,
+                      form: { data: { turbo_confirm: "¿Estás seguro? Esta acción no se puede deshacer!" } },
+                      style: "flex: 1; text-align: center; padding: 10px;
+                              background: #fdecea; color: #c62828;
+                              border-radius: 8px; border: none;
+                              font-size: 13px; font-weight: 600;
+                              cursor: pointer;" %>
+                <% end %>
+              <% end %>
+
+            <% end %>
+
+          </div>
+
+        </div>
+      </div>
+
+    <% end %>
+  </div>
+
+<% end %>

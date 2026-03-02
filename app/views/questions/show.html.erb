@@ -1,4 +1,116 @@
-<div>
-  <h1 class="font-bold text-4xl">Questions#show</h1>
-  <p>Find me in app/views/questions/show.html.erb</p>
+<div style="max-width: 860px; margin: 0 auto;">
+
+  <!-- Header -->
+  <div style="margin-bottom: 32px;">
+    <%= link_to "← Volver al quiz", quiz_path(@quiz), style: "font-size: 13px; color: #667eea; text-decoration: none; font-weight: 600; display: block; margin-bottom: 12px;" %>
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div>
+        <p style="font-size: 13px; color: #888; margin-bottom: 4px;">Pregunta del quiz: <strong><%= @quiz.title %></strong></p>
+        <h1 style="font-size: 24px; font-weight: bold; color: #1a1a2e; line-height: 1.4;"><%= @question.body %></h1>
+      </div>
+      <% if current_user.admin? && @quiz.user_id == current_user.id %>
+        <div style="display: flex; gap: 8px; flex-shrink: 0; margin-left: 24px;">
+          <%= link_to "Editar", edit_quiz_question_path(@quiz, @question),
+              style: "padding: 10px 20px; background: #f0f0f8; color: #667eea; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600;" %>
+          <%= button_to "Eliminar", quiz_question_path(@quiz, @question), method: :delete,
+              form: { data: { turbo_confirm: "¿Eliminar esta pregunta y todas sus opciones?" } },
+              style: "padding: 10px 20px; background: #fdecea; color: #c62828; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer;" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- image or video -->
+  <% if @question.image.attached? || @question.video_url.present? %>
+    <div style="display: grid; grid-template-columns: <%= @question.image.attached? && @question.video_url.present? ? '1fr 1fr' : '1fr' %>; gap: 16px; margin-bottom: 32px;">
+      <% if @question.image.attached? %>
+        <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+          <%= image_tag @question.image, style: "width: 100%; height: 200px; object-fit: cover;" %>
+        </div>
+      <% end %>
+      <% if @question.video_url.present? %>
+        <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+          <div style="position: relative; padding-bottom: 56.25%; height: 0;">
+            <iframe src="<%= @question.video_url.gsub('watch?v=', 'embed/').gsub('youtu.be/', 'www.youtube.com/embed/') %>"
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+                    frameborder="0" allowfullscreen></iframe>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <!-- Options -->
+  <div style="background: white; border-radius: 16px; padding: 32px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); margin-bottom: 24px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h2 style="font-size: 18px; font-weight: 700; color: #1a1a2e;">Opciones de respuesta</h2>
+      <span style="font-size: 13px; color: #888;"><%= @question.options.count %>/4 opciones</span>
+    </div>
+
+    <% if @question.options.empty? %>
+      <div style="text-align: center; padding: 40px; color: #aaa; background: #f8f8f8; border-radius: 10px;">
+        <div style="font-size: 40px; margin-bottom: 12px;">📝</div>
+        <p style="font-size: 14px; color: #555; font-weight: 600;">No hay opciones todavía</p>
+        <p style="font-size: 13px; margin-top: 4px;">Agrega las 4 opciones de respuesta abajo</p>
+      </div>
+    <% else %>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <% @question.options.each_with_index do |option, i| %>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 10px; border: 2px solid <%= option.correct? ? '#667eea' : '#e8e8f0' %>; background: <%= option.correct? ? '#f0f0ff' : 'white' %>;">
+            <span style="font-size: 13px; font-weight: 700; color: #667eea; width: 24px; flex-shrink: 0;">
+              <%= ('A'.ord + i).chr %>
+            </span>
+            <span style="flex: 1; font-size: 14px; color: #1a1a2e;"><%= option.body %></span>
+            <% if option.correct? %>
+              <span style="font-size: 12px; font-weight: 700; color: #2e7d32; background: #e8f5e9; padding: 2px 10px; border-radius: 20px; flex-shrink: 0;">✓ Correcta</span>
+            <% end %>
+            <% if current_user.admin? && @quiz.user_id == current_user.id %>
+              <%= button_to "✕", quiz_question_option_path(@quiz, @question, option), method: :delete,
+                  form: { data: { turbo_confirm: "¿Eliminar esta opción?" } },
+                  style: "background: none; border: none; color: #ccc; font-size: 16px; cursor: pointer; padding: 0; flex-shrink: 0;",
+                  onmouseover: "this.style.color='#c62828'",
+                  onmouseout: "this.style.color='#ccc'" %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- add option form -->
+  <% if current_user.admin? && @quiz.user_id == current_user.id && @question.options.count < 4 %>
+    <div style="background: white; border-radius: 16px; padding: 32px; box-shadow: 0 2px 12px rgba(0,0,0,0.08);">
+      <h2 style="font-size: 18px; font-weight: 700; color: #1a1a2e; margin-bottom: 20px;">Agregar opción</h2>
+
+      <%= form_with url: quiz_question_options_path(@quiz, @question), style: "display: flex; flex-direction: column; gap: 16px;" do |f| %>
+        <div>
+          <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Texto de la opción *</label>
+          <%= f.text_field :body, name: "option[body]", placeholder: "Ej: París",
+              style: "width: 100%; padding: 12px 16px; border: 2px solid #e8e8f0; border-radius: 10px; font-size: 15px; color: #1a1a2e; outline: none; box-sizing: border-box;",
+              onfocus: "this.style.borderColor='#667eea'",
+              onblur: "this.style.borderColor='#e8e8f0'" %>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <%= f.check_box :correct, name: "option[correct]",
+              style: "width: 18px; height: 18px; accent-color: #667eea; cursor: pointer;" %>
+          <label style="font-size: 14px; color: #555; cursor: pointer; font-weight: 500;">Esta es la respuesta correcta</label>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end;">
+          <%= f.submit "Agregar opción",
+              style: "padding: 12px 28px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(102,126,234,0.4);" %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if @question.options.count == 4 %>
+    <div style="display: flex; gap: 12px; justify-content: center; margin-top: 8px;">
+      <%= link_to "＋ Crear otra pregunta", new_quiz_question_path(@quiz),
+          style: "flex: 1; text-align: center; padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 10px; text-decoration: none; font-size: 14px; font-weight: 600; box-shadow: 0 4px 15px rgba(102,126,234,0.4);" %>
+      <%= link_to "← Volver al quiz", quiz_path(@quiz),
+          style: "flex: 1; text-align: center; padding: 14px; background: #f0f0f8; color: #667eea; border-radius: 10px; text-decoration: none; font-size: 14px; font-weight: 600;" %>
+    </div>
+  <% end %>
 </div>

@@ -3,6 +3,8 @@ class QuizzesController < ApplicationController
 
   def index
     @quizzes = policy_scope(Quiz)
+
+    @attempts_by_quiz = current_user.attempts.where(quiz_id: @quizzes.pluck(:id)).index_by(&:quiz_id)
   end
 
   def show
@@ -48,14 +50,17 @@ class QuizzesController < ApplicationController
 
   def publish
     authorize @quiz
-    @quiz.published!
-    redirect_to @quiz, notice: "Quizz publicado!"
+    if @quiz.update(status: :published)
+      redirect_to @quiz, notice: "¡Quiz Publicado!"
+    else
+      redirect_to @quiz, alert: @quiz.errors.full_messages.join(", ")
+    end
   end
 
   private
   
   def set_quiz
-    @quiz = Quiz.find(params[:id])
+    @quiz = Quiz.includes(questions: :options).find(params[:id])
   end
 
   def quiz_params

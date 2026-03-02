@@ -1,0 +1,73 @@
+<%# Partial form for creating and editing questions %>
+<%# Receives: quiz (Quiz), question (Question) %>
+<%= form_with model: [@quiz, question], style: "display: flex; flex-direction: column; gap: 24px;" do |f| %>
+
+  <% if question.errors.any? %>
+    <div style="background: #fdecea; border-radius: 8px; padding: 16px;">
+      <p style="color: #c62828; font-weight: 600; margin-bottom: 8px;">Por favor corrige los siguientes errores:</p>
+      <ul style="color: #c62828; font-size: 14px; padding-left: 20px;">
+        <% question.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <!-- Question body -->
+  <div style="background: white; border-radius: 16px; padding: 32px; box-shadow: 0 2px 12px rgba(0,0,0,0.08);">
+    <h2 style="font-size: 16px; font-weight: 700; color: #1a1a2e; margin-bottom: 20px;">📝 Pregunta</h2>
+
+    <div style="margin-bottom: 20px;">
+      <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Enunciado *</label>
+      <%= f.text_area :body, placeholder: "Ej: ¿Cuál es la capital de Francia?", rows: 3,
+          style: "width: 100%; padding: 12px 16px; border: 2px solid #e8e8f0; border-radius: 10px; font-size: 15px; color: #1a1a2e; outline: none; box-sizing: border-box; resize: vertical;",
+          onfocus: "this.style.borderColor='#667eea'",
+          onblur: "this.style.borderColor='#e8e8f0'" %>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+      <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">URL de Video (opcional)</label>
+      <%= f.url_field :video_url, placeholder: "https://www.youtube.com/watch?v=...",
+          style: "width: 100%; padding: 12px 16px; border: 2px solid #e8e8f0; border-radius: 10px; font-size: 15px; color: #1a1a2e; outline: none; box-sizing: border-box;",
+          onfocus: "this.style.borderColor='#667eea'",
+          onblur: "this.style.borderColor='#e8e8f0'" %>
+    </div>
+
+    <!-- Image upload - only JPEG, PNG, WEBP allowed, max 2MB (validated in model) -->
+    <div>
+      <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Imagen (opcional)</label>
+      <% if question.persisted? && question.image.attached? %>
+        <div style="margin-bottom: 12px;">
+          <%= image_tag question.image, style: "height: 120px; border-radius: 8px; object-fit: cover;" %>
+          <p style="font-size: 12px; color: #888; margin-top: 6px;">Sube una nueva imagen para reemplazarla</p>
+        </div>
+      <% end %>
+      <%= f.file_field :image, accept: "image/jpeg,image/png,image/webp",
+          style: "width: 100%; padding: 12px 16px; border: 2px dashed #e8e8f0; border-radius: 10px; font-size: 14px; color: #777; box-sizing: border-box; cursor: pointer;",
+          onchange: "this.style.borderColor='#667eea'" %>
+      <p style="font-size: 12px; color: #aaa; margin-top: 6px;">JPEG, PNG o WEBP. Máximo 2MB.</p>
+    </div>
+  </div>
+
+  <!-- Options - managed exclusively from questions#show, not here -->
+  <div style="background: #f8f8ff; border-radius: 12px; padding: 20px;">
+    <p style="font-size: 13px; color: #888; display: flex; align-items: center; gap: 8px;">
+      <span style="font-size: 16px;">💡</span>
+      Las opciones de respuesta se gestionan desde la
+      <% if question.persisted? %>
+        <%= link_to "vista de la pregunta", quiz_question_path(@quiz, question), style: "color: #667eea; font-weight: 600;" %>
+      <% else %>
+        vista de la pregunta (disponible después de guardar)
+      <% end %>
+    </p>
+  </div>
+
+  <!-- Form action buttons -->
+  <div style="display: flex; gap: 12px; justify-content: flex-end;">
+    <%= link_to "Cancelar", quiz_path(@quiz),
+        style: "padding: 12px 24px; background: #f0f0f8; color: #667eea; border-radius: 10px; text-decoration: none; font-size: 14px; font-weight: 600;" %>
+    <%= f.submit question.persisted? ? "Guardar cambios" : "Crear Pregunta",
+        style: "padding: 12px 32px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(102,126,234,0.4);" %>
+  </div>
+
+<% end %>

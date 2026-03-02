@@ -11,7 +11,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :attempts, only: [:create, :show]
+  resources :attempts, only: [:create, :show, :update]
   
   # API V1
   namespace :api do

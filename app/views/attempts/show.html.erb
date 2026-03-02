@@ -1,0 +1,134 @@
+<div style="max-width: 860px; margin: 0 auto; padding: 0 16px;">
+
+  <!-- Header -->
+  <div style="margin-bottom: 32px;">
+    <%= link_to "← Volver a quizzes", quizzes_path,
+        style: "font-size: 13px; color: #667eea; text-decoration: none; font-weight: 600; display: block; margin-bottom: 12px;" %>
+
+    <h1 style="font-size: 28px; font-weight: bold; color: #1a1a2e; margin-bottom: 4px;">
+      <%= @attempt.quiz.title %>
+    </h1>
+
+    <p style="color: #888; font-size: 14px;">
+      <%= @attempt.completed_at? ? "Completado el #{@attempt.completed_at.strftime('%d/%m/%Y a las %H:%M')}" : "En progreso..." %>
+    </p>
+  </div>
+
+  <% if @attempt.completed_at? %>
+    <% passed = @attempt.score >= @attempt.quiz.passing_score %>
+
+    <!-- Score card -->
+    <div style="background: <%= passed ? 'linear-gradient(135deg, #667eea, #764ba2)' : 'linear-gradient(135deg, #f093fb, #f5576c)' %>;
+                border-radius: 16px; padding: 40px; text-align: center; color: white;
+                margin-bottom: 32px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
+      <div style="font-size: 64px; margin-bottom: 16px;"><%= passed ? '🏆' : '😔' %></div>
+      <div style="font-size: 72px; font-weight: bold; line-height: 1;"><%= @attempt.score %>%</div>
+      <div style="font-size: 20px; opacity: 0.9; margin-top: 8px; font-weight: 600;">
+        <%= passed ? '¡Aprobado!' : 'No aprobado' %>
+      </div>
+      <div style="font-size: 14px; opacity: 0.7; margin-top: 8px;">
+        Puntaje mínimo para aprobar: <%= @attempt.quiz.passing_score %>%
+      </div>
+    </div>
+
+  <% else %>
+
+    <% if params[:started] %>
+
+      <!-- QUIZ FORM -->
+      <%= form_with url: attempt_path(@attempt), method: :patch,
+            style: "display: flex; flex-direction: column; gap: 24px;" do |f| %>
+
+        <% @attempt.quiz.questions.each_with_index do |question, index| %>
+
+          <div style="background: white; border-radius: 12px; padding: 24px;
+                      box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+
+            <div style="display: flex; gap: 12px; align-items: flex-start; margin-bottom: 16px;">
+              <span style="background: linear-gradient(135deg, #667eea, #764ba2);
+                          color: white; width: 28px; height: 28px; border-radius: 50%;
+                          display: flex; align-items: center; justify-content: center;
+                          font-size: 13px; font-weight: 700; flex-shrink: 0;">
+                <%= index + 1 %>
+              </span>
+
+              <p style="font-size: 15px; font-weight: 600; color: #1a1a2e;">
+                <%= question.body %>
+              </p>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-left: 40px;">
+              <% question.options.each do |option| %>
+                <label style="display: flex; align-items: center; gap: 12px;
+                              padding: 12px 16px; border-radius: 8px;
+                              border: 2px solid #e8e8f0; cursor: pointer;
+                              font-size: 14px; color: #1a1a2e; background: white;"
+                       onmouseover="this.style.borderColor='#667eea'; this.style.background='#f0f0ff'"
+                       onmouseout="this.style.borderColor='#e8e8f0'; this.style.background='white'">
+
+                  <input type="radio"
+                         name="answers[<%= question.id %>]"
+                         value="<%= option.id %>"
+                         style="accent-color: #667eea; width: 16px; height: 16px; flex-shrink: 0;">
+
+                  <%= option.body %>
+                </label>
+              <% end %>
+            </div>
+
+          </div>
+
+        <% end %>
+
+        <!-- Submit button -->
+        <div style="display: flex; justify-content: flex-end; width: 100%; margin-top: 8px;">
+          <%= f.submit "Enviar respuestas →",
+              style: "padding: 14px 36px;
+                      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                      color: white; border: none; border-radius: 10px;
+                      font-size: 15px; font-weight: 600; cursor: pointer;
+                      box-shadow: 0 4px 15px rgba(102,126,234,0.4);" %>
+        </div>
+
+      <% end %>
+
+    <% else %>
+
+      <!-- WARNING SCREEN -->
+      <div style="background: white; border-radius: 16px; padding: 48px;
+                  box-shadow: 0 2px 12px rgba(0,0,0,0.08); text-align: center;">
+
+        <div style="font-size: 64px; margin-bottom: 24px;">⚠️</div>
+
+        <h2 style="font-size: 24px; font-weight: bold; color: #1a1a2e; margin-bottom: 12px;">
+          ¿Estás listo?
+        </h2>
+
+        <p style="color: #555; font-size: 15px; max-width: 480px; margin: 0 auto 12px;">
+          Este quiz tiene <strong><%= @attempt.quiz.questions.count %> preguntas</strong>
+          y el puntaje mínimo para aprobar es
+          <strong><%= @attempt.quiz.passing_score %>%</strong>.
+        </p>
+
+        <p style="color: #e65100; font-size: 14px; font-weight: 600;
+                  background: #fff3e0; padding: 12px 20px;
+                  border-radius: 8px; display: inline-block; margin-bottom: 32px;">
+          ⚠️ Solo tienes un intento. Si abandonas la página,
+          el intento se contará como realizado.
+        </p>
+
+        <%= link_to "Comenzar quiz →",
+            attempt_path(@attempt, started: true),
+            style: "padding: 14px 40px;
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white; border-radius: 10px; text-decoration: none;
+                    font-size: 16px; font-weight: 600;
+                    box-shadow: 0 4px 15px rgba(102,126,234,0.4);" %>
+
+      </div>
+
+    <% end %>
+
+  <% end %>
+
+</div>

@@ -1,0 +1,73 @@
+<%= form_with model: quiz, style: "background: white; border-radius: 16px; padding: 32px; box-shadow: 0 2px 12px rgba(0,0,0,0.08);" do |f| %>
+
+  <% if quiz.errors.any? %>
+    <div style="background: #fdecea; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
+      <p style="color: #c62828; font-weight: 600; margin-bottom: 8px;">Por favor corrige los siguientes errores:</p>
+      <ul style="color: #c62828; font-size: 14px; padding-left: 20px;">
+        <% quiz.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <!-- Título -->
+  <div style="margin-bottom: 24px;">
+    <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Título *</label>
+    <%= f.text_field :title, placeholder: "Ej: Capitales del Mundo",
+        style: "width: 100%; padding: 12px 16px; border: 2px solid #e8e8f0; border-radius: 10px; font-size: 15px; color: #1a1a2e; outline: none; box-sizing: border-box;",
+        onfocus: "this.style.borderColor='#667eea'",
+        onblur: "this.style.borderColor='#e8e8f0'" %>
+  </div>
+
+  <!-- Descripción -->
+  <div style="margin-bottom: 24px;">
+    <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Descripción</label>
+    <%= f.text_area :description, placeholder: "Describe de qué trata el quiz...", rows: 3,
+        style: "width: 100%; padding: 12px 16px; border: 2px solid #e8e8f0; border-radius: 10px; font-size: 15px; color: #1a1a2e; outline: none; box-sizing: border-box; resize: vertical;",
+        onfocus: "this.style.borderColor='#667eea'",
+        onblur: "this.style.borderColor='#e8e8f0'" %>
+  </div>
+
+  <!-- Puntaje mínimo -->
+  <div style="margin-bottom: 24px;">
+    <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Puntaje mínimo para aprobar (%)</label>
+    <%= f.number_field :passing_score, min: 0, max: 100, placeholder: "70",
+        style: "width: 100%; padding: 12px 16px; border: 2px solid #e8e8f0; border-radius: 10px; font-size: 15px; color: #1a1a2e; outline: none; box-sizing: border-box;",
+        onfocus: "this.style.borderColor='#667eea'",
+        onblur: "this.style.borderColor='#e8e8f0'" %>
+  </div>
+
+  <!-- Video URL -->
+  <div style="margin-bottom: 24px;">
+    <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">URL de Video (YouTube/Vimeo)</label>
+    <%= f.url_field :video_url, placeholder: "https://www.youtube.com/watch?v=...",
+        style: "width: 100%; padding: 12px 16px; border: 2px solid #e8e8f0; border-radius: 10px; font-size: 15px; color: #1a1a2e; outline: none; box-sizing: border-box;",
+        onfocus: "this.style.borderColor='#667eea'",
+        onblur: "this.style.borderColor='#e8e8f0'" %>
+  </div>
+
+  <!-- Imagen -->
+  <div style="margin-bottom: 32px;">
+    <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Imagen del Quiz</label>
+    <% if quiz.persisted? && quiz.image.attached? %>
+      <div style="margin-bottom: 12px;">
+        <%= image_tag quiz.image, style: "height: 120px; border-radius: 8px; object-fit: cover;" %>
+        <p style="font-size: 12px; color: #888; margin-top: 6px;">Sube una nueva imagen para reemplazarla</p>
+      </div>
+    <% end %>
+    <%= f.file_field :image, accept: "image/jpeg,image/png,image/webp",
+        style: "width: 100%; padding: 12px 16px; border: 2px dashed #e8e8f0; border-radius: 10px; font-size: 14px; color: #777; box-sizing: border-box; cursor: pointer;",
+        onchange: "this.style.borderColor='#667eea'" %>
+    <p style="font-size: 12px; color: #aaa; margin-top: 6px;">JPEG, PNG o WEBP. Máximo 2MB.</p>
+  </div>
+
+  <!-- Botones -->
+  <div style="display: flex; gap: 12px; justify-content: flex-end;">
+    <%= link_to "Cancelar", quiz.persisted? ? quiz_path(quiz) : quizzes_path,
+        style: "padding: 12px 24px; background: #f0f0f8; color: #667eea; border-radius: 10px; text-decoration: none; font-size: 14px; font-weight: 600;" %>
+    <%= f.submit quiz.persisted? ? "Guardar cambios" : "Crear Quiz",
+        style: "padding: 12px 32px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(102,126,234,0.4);" %>
+  </div>
+
+<% end %>,

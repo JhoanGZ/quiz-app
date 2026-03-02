@@ -1,4 +1,6 @@
-<div>
-  <h1 class="font-bold text-4xl">Quizzes#edit</h1>
-  <p>Find me in app/views/quizzes/edit.html.erb</p>
+<div style="max-width: 700px; margin: 0 auto;">
+  <%= link_to "← Volver", quiz_path(@quiz), style: "font-size: 13px; color: #667eea; text-decoration: none; font-weight: 600; display: block; margin-bottom: 20px;" %>
+  <h1 style="font-size: 28px; font-weight: bold; color: #1a1a2e; margin-bottom: 8px;">Editar Quiz</h1>
+  <p style="color: #888; margin-bottom: 32px;">Modifica los datos de tu quiz</p>
+  <%= render "form", quiz: @quiz %>
 </div>
