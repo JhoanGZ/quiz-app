@@ -8,8 +8,7 @@ class AttemptPolicy < ApplicationPolicy
     user.admin? || record.user_id == user.id
   end
 
-  # Permitir que el player actualice solo su propio intento
-  # y solo si aún no está completado
+  # Allow the player to update its own attempt. Only works if it's not completed
   def update?
     user.player? &&
       record.user_id == user.id &&

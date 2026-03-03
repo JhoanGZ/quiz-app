@@ -1,29 +1,106 @@
-<h2>Sign up</h2>
+<div style="display: flex; min-height: 100vh;">
+  <!-- Left side - Hero -->
+  <div class="hidden lg:block" style="width: 60%; background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+    <div style="position: absolute; top: -60px; left: -60px; width: 250px; height: 250px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+    <div style="position: absolute; bottom: -40px; right: -40px; width: 180px; height: 180px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+    <div style="position: absolute; top: 40%; left: 60%; width: 100px; height: 100px; background: rgba(255,255,255,0.08); border-radius: 50%;"></div>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
-
-  <div class="field">
-    <p><%= f.label :email %></p>
-    <p><%= f.email_field :email, autofocus: true, autocomplete: "email" %></p>
+    <div style="position: relative; z-index: 10; padding: 48px; color: white; text-align: center;">
+      <div style="font-size: 72px; margin-bottom: 16px;">🚀</div>
+      <h1 style="font-size: 48px; font-weight: bold; margin-bottom: 16px; text-shadow: 0 2px 10px rgba(0,0,0,0.2);">Únete</h1>
+      <p style="font-size: 20px; opacity: 0.9;">Crea tu cuenta y empieza a jugar</p>
+      <div style="margin-top: 32px; display: flex; gap: 12px; justify-content: center;">
+        <span style="background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; font-size: 14px;">✨ Gratis</span>
+        <span style="background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; font-size: 14px;">⚡ Rápido</span>
+        <span style="background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; font-size: 14px;">🎮 Divertido</span>
+      </div>
+    </div>
   </div>
 
-  <div class="field">
-    <p><%= f.label :password %></p>
-    <% if @minimum_password_length %>
-      <p><em>(<%= @minimum_password_length %> characters minimum)</em></p>
-    <% end %>
-    <p><%= f.password_field :password, autocomplete: "new-password" %></p>
-  </div>
+  <!-- Right side - Form -->
+  <div style="flex: 1; display: flex; align-items: center; justify-content: center; background: linear-gradient(180deg, #f8f9ff 0%, #ffffff 100%); min-height: 100vh;">
+    <div style="width: 100%; max-width: 380px; padding: 48px 32px;">
 
-  <div class="field">
-    <p><%= f.label :password_confirmation %></p>
-    <p><%= f.password_field :password_confirmation, autocomplete: "new-password" %></p>
-  </div>
+      <div style="text-align: center; margin-bottom: 32px;">
+        <div style="display: inline-block; background: linear-gradient(135deg, #667eea, #764ba2); padding: 16px; border-radius: 20px; margin-bottom: 16px;">
+          <span style="font-size: 32px;">📝</span>
+        </div>
+        <h2 style="font-size: 32px; font-weight: bold; color: #1a1a2e; margin-bottom: 8px;">Crear cuenta</h2>
+        <p style="color: #888;">Completa tus datos para registrarte</p>
+      </div>
 
-  <div class="actions">
-    <%= f.submit "Sign up" %>
-  </div>
-<% end %>
+      <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
 
-<%= render "devise/shared/links" %>
+        <% if resource.errors.any? %>
+          <div style="background: #fff0f0; border: 1px solid #ffcdd2; border-radius: 12px; padding: 12px 16px; margin-bottom: 20px;">
+            <% resource.errors.full_messages.each do |message| %>
+              <p style="color: #c62828; font-size: 13px; margin: 2px 0;"><%= message %></p>
+            <% end %>
+          </div>
+        <% end %>
+
+        <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+          <div style="flex: 1;">
+            <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Nombre</label>
+            <%= f.text_field :first_name, autofocus: true, placeholder: "Juan",
+                style: "width: 100%; padding: 14px 16px; background: white; border: 2px solid #e8e8f0; border-radius: 12px; color: #1a1a2e; font-size: 15px; outline: none; box-sizing: border-box;",
+                onfocus: "this.style.borderColor='#667eea'",
+                onblur: "this.style.borderColor='#e8e8f0'" %>
+          </div>
+          <div style="flex: 1;">
+            <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Apellido</label>
+            <%= f.text_field :last_name, placeholder: "Pérez",
+                style: "width: 100%; padding: 14px 16px; background: white; border: 2px solid #e8e8f0; border-radius: 12px; color: #1a1a2e; font-size: 15px; outline: none; box-sizing: border-box;",
+                onfocus: "this.style.borderColor='#667eea'",
+                onblur: "this.style.borderColor='#e8e8f0'" %>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Email</label>
+          <%= f.email_field :email, autocomplete: "email", placeholder: "tu@email.com",
+              style: "width: 100%; padding: 14px 16px; background: white; border: 2px solid #e8e8f0; border-radius: 12px; color: #1a1a2e; font-size: 15px; outline: none; box-sizing: border-box;",
+              onfocus: "this.style.borderColor='#667eea'",
+              onblur: "this.style.borderColor='#e8e8f0'" %>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Contraseña</label>
+          <%= f.password_field :password, autocomplete: "new-password", placeholder: "Mínimo 6 caracteres",
+              style: "width: 100%; padding: 14px 16px; background: white; border: 2px solid #e8e8f0; border-radius: 12px; color: #1a1a2e; font-size: 15px; outline: none; box-sizing: border-box;",
+              onfocus: "this.style.borderColor='#667eea'",
+              onblur: "this.style.borderColor='#e8e8f0'" %>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Confirmar contraseña</label>
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", placeholder: "••••••••",
+              style: "width: 100%; padding: 14px 16px; background: white; border: 2px solid #e8e8f0; border-radius: 12px; color: #1a1a2e; font-size: 15px; outline: none; box-sizing: border-box;",
+              onfocus: "this.style.borderColor='#667eea'",
+              onblur: "this.style.borderColor='#e8e8f0'" %>
+        </div>
+
+        <div style="margin-bottom: 28px;">
+          <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Rol</label>
+          <%= f.select :role, [["Jugador", "player"], ["Administrador", "admin"]],
+              {}, style: "width: 100%; padding: 14px 16px; background: white; border: 2px solid #e8e8f0; border-radius: 12px; color: #1a1a2e; font-size: 15px; outline: none; box-sizing: border-box; cursor: pointer;",
+              onfocus: "this.style.borderColor='#667eea'",
+              onblur: "this.style.borderColor='#e8e8f0'" %>
+        </div>
+
+        <div>
+          <%= f.submit "Crear cuenta →",
+              style: "width: 100%; padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);",
+              onmouseover: "this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(102,126,234,0.5)'",
+              onmouseout: "this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(102,126,234,0.4)'" %>
+        </div>
+      <% end %>
+
+      <p style="text-align: center; margin-top: 28px; color: #888; font-size: 14px;">
+        ¿Ya tienes cuenta?
+        <%= link_to "Iniciar sesión", new_session_path(resource_name),
+            style: "color: #667eea; text-decoration: none; font-weight: 600;" %>
+      </p>
+    </div>
+  </div>
+</div>
