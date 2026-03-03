@@ -6,11 +6,11 @@ Quiz application built with Ruby on Rails 8 featuring role-based access control,
 
 ## Stack
 
-- **Ruby on Rails 8.1** — Web framework
-- **PostgreSQL 16** — Database
-- **Devise** — Authentication
-- **Pundit** — Authorization (role-based policies)
-- **Tailwind CSS** — Styling
+- **Ruby on Rails 8.1** - Web framework
+- **PostgreSQL 16** - Database
+- **Devise** - Authentication
+- **Pundit** - Authorization (role-based policies)
+- **Tailwind CSS** - Styling
 - **Hotwire / Turbo + Stimulus** — Frontend interactivity
 - **Active Storage** — Image uploads (Cloudinary in production)
 - **Docker + Docker Compose** — Containerized development
