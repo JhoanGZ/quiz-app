@@ -31,6 +31,13 @@
     <% end %>
   </div>
 
+  <!-- Quiz image -->
+  <% if @quiz.image.attached? %>
+    <div style="margin-bottom: 24px; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+      <%= image_tag @quiz.image, style: "width: 100%; max-height: 350px; object-fit: cover;" %>
+    </div>
+  <% end %>
+
   <!-- Stats -->
   <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px;">
     <div style="background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); text-align: center;">
@@ -117,7 +124,6 @@
     <% existing_attempt = @quiz.attempts.find_by(user_id: current_user.id) %>
     <div style="text-align: center; margin-top: 40px;">
       <% if existing_attempt %>
-        <!-- Player already attempted this quiz -->
         <div style="background: #fff3e0; border-radius: 12px; padding: 24px; display: inline-block;">
           <p style="color: #e65100; font-weight: 600; margin-bottom: 12px;">Ya realizaste este quiz</p>
           <%= link_to "Ver mi resultado", attempt_path(existing_attempt),
